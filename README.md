@@ -3,6 +3,12 @@
 
 ## API
 ### `Korg87`
+#### `.encodeLength(length)`
+Estimate encode length.
+
+#### `.decodeLength(length)`
+Estimate decode length.
+
 #### `.encodeBlock(inputSlice, outputSlice)`
 Encode a 7-byte (or less) block.
 
