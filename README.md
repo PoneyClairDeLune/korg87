@@ -1,6 +1,11 @@
 # korg87
 🧐 Encode binary data with KORG 8 on 7 encoding.
 
+This project is a response to [How the Great Firewall of China Detects and Blocks Fully Encrypted Traffic](https://gfw.report/publications/usenixsecurity23/en/), as the encoding scheme used in the project...
+
+* Cannot have randomness exceed 87.5%.
+* Around 75% of the bytes are printable.
+
 ## API
 ### `Korg87`
 #### `.encodeLength(length)`
