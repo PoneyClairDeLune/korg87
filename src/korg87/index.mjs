@@ -2,20 +2,8 @@
 
 // KORG 8 on 7 codec
 
-let typeCheck = function (variable, type, nullable = false) {
-	if (!type && !nullable) {
-		throw(new TypeError(`Type is not defined`));
-	};
-	if (variable?.constructor) {
-		if (variable.constructor != type) {
-			throw(new TypeError(`Value is not type ${type.name}`));
-		};
-	} else {
-		if (!nullable) {
-			throw(new TypeError(`Value is not nullable`));
-		};
-	};
-};
+import {typeCheck} from "./typeCheck.js";
+import {toByteArray} from "./utils.js";
 
 let windowMove = function (inBuf, inBufWin = 1, outBuf, outBufWin = 1, callback) {
 	typeCheck(inBuf, Uint8Array);
@@ -87,6 +75,18 @@ let Korg87 = class {
 		windowMove(source, this.chunkSizeDec, target, this.chunkSizeEnc, (s, t) => {
 			this.decodeBlock(s, t);
 		});
+	};
+	static encodeSync(source, target) {
+		this.encodeBytes(toByteArray(source), toByteArray(target));
+	};
+	static decodeSync(source, target) {
+		this.decodeBytes(toByteArray(source), toByteArray(target));
+	};
+	static async encode(source, target) {
+		this.encodeBytes(toByteArray(source), toByteArray(target));
+	};
+	static async decode(source, target) {
+		this.decodeBytes(toByteArray(source), toByteArray(target));
 	};
 };
 

@@ -17,27 +17,20 @@ let isSame = function (a, b) {
 	return same;
 };
 
-let testData = [
-	new Uint8Array([0, 1, 2, 3, 4, 5, 6]),
-	new Uint8Array([121, 122, 123, 124, 125, 126, 127]),
-	new Uint8Array([128, 129, 130, 131, 132, 133, 134]),
-	new Uint8Array([249, 250, 251, 252, 253, 254, 255])
-];
-
-for (let count = 0; count < 12; count ++) {
-	let buffer = new Uint8Array(Math.floor(Math.random() * 7) + 1);
+// Blob encoding test
+let testData = [];
+for (let count = 0; count < 16; count ++) {
+	let buffer = new Uint8Array(Math.floor(Math.random() * 106) + 7);
 	crypto.getRandomValues(buffer);
 	testData.push(buffer);
 };
-
-// Block encoding test
-testData.forEach((e, i) => {
+testData.forEach(async (e, i) => {
 	let encoded = new Uint8Array(Korg87.encodeLength(e.length));
+	await Korg87.encode(e, encoded);
 	let decoded = new Uint8Array(Korg87.decodeLength(encoded.length));
-	Korg87.encodeBlock(e, encoded);
-	Korg87.decodeBlock(encoded, decoded);
+	await Korg87.decode(encoded, decoded);
 	let passed = isSame(e, decoded);
-	console.info(`Test #1 #${i + 1} ${["fail", "pass"][+passed]}ed.`);
+	console.info(`Test #2 #${i + 1} ${["fail", "pass"][+passed]}ed.`);
 	if (!passed) {
 		console.info(`Truth: ${e.join(", ")}`);
 		console.info(`Proxy: ${encoded.join(", ")}`);
@@ -45,19 +38,25 @@ testData.forEach((e, i) => {
 	};
 });
 
-testData = [];
-for (let count = 0; count < 16; count ++) {
-	let buffer = new Uint8Array(Math.floor(Math.random() * 106) + 7);
+// Block encoding test
+testData = [
+	new Uint8Array([0, 1, 2, 3, 4, 5, 6]),
+	new Uint8Array([121, 122, 123, 124, 125, 126, 127]),
+	new Uint8Array([128, 129, 130, 131, 132, 133, 134]),
+	new Uint8Array([249, 250, 251, 252, 253, 254, 255])
+];
+for (let count = 0; count < 12; count ++) {
+	let buffer = new Uint8Array(Math.floor(Math.random() * 7) + 1);
 	crypto.getRandomValues(buffer);
 	testData.push(buffer);
 };
 testData.forEach((e, i) => {
 	let encoded = new Uint8Array(Korg87.encodeLength(e.length));
-	Korg87.encodeBytes(e, encoded);
 	let decoded = new Uint8Array(Korg87.decodeLength(encoded.length));
-	Korg87.decodeBytes(encoded, decoded);
+	Korg87.encodeBlock(e, encoded);
+	Korg87.decodeBlock(encoded, decoded);
 	let passed = isSame(e, decoded);
-	console.info(`Test #2 #${i + 1} ${["fail", "pass"][+passed]}ed.`);
+	console.info(`Test #1 #${i + 1} ${["fail", "pass"][+passed]}ed.`);
 	if (!passed) {
 		console.info(`Truth: ${e.join(", ")}`);
 		console.info(`Proxy: ${encoded.join(", ")}`);
