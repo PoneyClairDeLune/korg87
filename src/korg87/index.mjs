@@ -17,20 +17,29 @@ let typeCheck = function (variable, type, nullable = false) {
 	};
 };
 
+let windowMove = function (inBuf, inBufWin, outBuf, outBufWin) {
+	typeCheck(inBuf, Uint8Array);
+	typeCheck(outBuf, Uint8Array);
+	typeCheck(inBufWin, Number);
+	typeCheck(outBufWin, Number);
+};
+
 let Korg87 = class {
+	static chunkSizeEnc = 7;
+	static chunkSizeDec = 8;
 	static encodeLength(length) {
 		typeCheck(length, Number);
-		return Math.ceil((length << 3) / 7);
+		return Math.ceil(length * this.chunkSizeDec / this.chunkSizeEnc);
 	};
 	static decodeLength(length) {
 		typeCheck(length, Number);
-		return length * 7 >> 3;
+		return Math.floor(length * this.chunkSizeEnc / this.chunkSizeDec);
 	};
 	static encodeBlock(source, target) {
 		typeCheck(source, Uint8Array);
 		typeCheck(target, Uint8Array);
-		if (source.length > 7) {
-			throw(new Error(`Source is greater than 7 bytes`));
+		if (source.length > this.chunkSizeEnc) {
+			throw(new Error(`Source is greater than ${this.chunkSizeEnc} bytes`));
 		};
 		if (target.length < this.encodeLength(source.length)) {
 			throw(new Error(`Target isn't sufficient for decoding`));
@@ -45,8 +54,8 @@ let Korg87 = class {
 	static decodeBlock(source, target) {
 		typeCheck(source, Uint8Array);
 		typeCheck(target, Uint8Array);
-		if (source.length > 8) {
-			throw(new Error(`Source is greater than 8 bytes`));
+		if (source.length > this.chunkSizeDec) {
+			throw(new Error(`Source is greater than ${this.chunkSizeEnc} bytes`));
 		};
 		if (target.length < this.decodeLength(source.length)) {
 			throw(new Error(`Target isn't sufficient for decoding`));

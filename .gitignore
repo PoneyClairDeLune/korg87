@@ -7,7 +7,6 @@ yarn.lock
 /conf/include/
 /dist/*.map
 /dist/*.js
-/dist/*.mjs
 /dist/*.sh
 /proxy/*
 /lib/*
