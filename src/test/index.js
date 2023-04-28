@@ -8,12 +8,13 @@ let isSame = function (a, b) {
 	if (a.length != b.length) {
 		return false;
 	};
+	let same = true;
 	a.forEach((e, i) => {
-		if (e != b[i]) {
-			return false;
+		if (same && e != b[i]) {
+			same = false;
 		};
 	});
-	return true;
+	return same;
 };
 
 let testData = [
@@ -29,6 +30,7 @@ for (let count = 0; count < 12; count ++) {
 	testData.push(buffer);
 };
 
+// Block encoding test
 testData.forEach((e, i) => {
 	let encoded = new Uint8Array(Korg87.encodeLength(e.length));
 	let decoded = new Uint8Array(Korg87.decodeLength(encoded.length));
@@ -36,6 +38,26 @@ testData.forEach((e, i) => {
 	Korg87.decodeBlock(encoded, decoded);
 	let passed = isSame(e, decoded);
 	console.info(`Test #1 #${i + 1} ${["fail", "pass"][+passed]}ed.`);
+	if (!passed) {
+		console.info(`Truth: ${e.join(", ")}`);
+		console.info(`Proxy: ${encoded.join(", ")}`);
+		console.info(`Proof: ${decoded.join(", ")}`);
+	};
+});
+
+testData = [];
+for (let count = 0; count < 16; count ++) {
+	let buffer = new Uint8Array(Math.floor(Math.random() * 106) + 7);
+	crypto.getRandomValues(buffer);
+	testData.push(buffer);
+};
+testData.forEach((e, i) => {
+	let encoded = new Uint8Array(Korg87.encodeLength(e.length));
+	Korg87.encodeBytes(e, encoded);
+	let decoded = new Uint8Array(Korg87.decodeLength(encoded.length));
+	Korg87.decodeBytes(encoded, decoded);
+	let passed = isSame(e, decoded);
+	console.info(`Test #2 #${i + 1} ${["fail", "pass"][+passed]}ed.`);
 	if (!passed) {
 		console.info(`Truth: ${e.join(", ")}`);
 		console.info(`Proxy: ${encoded.join(", ")}`);
